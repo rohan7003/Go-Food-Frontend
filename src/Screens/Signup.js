@@ -37,15 +37,21 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/createuser", {
+    //   // credentials: 'include',
+    //   // Origin:"http://localhost:3000/login",
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password, location: credentials.geolocation })
+    //  });
     const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/createuser", {
-      // credentials: 'include',
-      // Origin:"http://localhost:3000/login",
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password, location: credentials.geolocation })
-
     });
     const json = await response.json()
     console.log(json);
