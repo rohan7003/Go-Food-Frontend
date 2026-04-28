@@ -37,7 +37,7 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://go-food-2-9v3n.onrender.com/api/auth/createuser", {
+    const response = await fetch("httpS://go-food-2-9v3n.onrender.com/api/auth/createuser", {
       // credentials: 'include',
       // Origin:"http://localhost:3000/login",
       method: 'POST',
