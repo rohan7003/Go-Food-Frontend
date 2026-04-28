@@ -53,6 +53,7 @@ export default function Signup() {
     }
 
     try {
+      console.log("SENDING:", credentials);
       const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/createuser", {
         method: 'POST',
         headers: {
