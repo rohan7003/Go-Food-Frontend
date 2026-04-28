@@ -8,52 +8,37 @@ export default function Signup() {
     name: "",
     email: "",
     password: "",
-    geolocation: ""
+    location: ""   // ✅ changed from geolocation
   });
 
-  let [address, setAddress] = useState("");
   let navigate = useNavigate();
 
-  // 🔹 Get current location
-  const handleClick = async (e) => {
-    e.preventDefault();
-
+  // 🔹 OPTIONAL: Get current location (auto-fill)
+  const handleClick = async () => {
     try {
-      let navLocation = () => {
-        return new Promise((res, rej) => {
-          navigator.geolocation.getCurrentPosition(res, rej);
+      navigator.geolocation.getCurrentPosition(async (res) => {
+
+        let lat = res.coords.latitude;
+        let long = res.coords.longitude;
+
+        const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/getlocation", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ latlong: { lat, long } })
         });
-      };
 
-      let latlong = await navLocation().then(res => {
-        let latitude = res.coords.latitude;
-        let longitude = res.coords.longitude;
-        return [latitude, longitude];
+        const data = await response.json();
+
+        setCredentials((prev) => ({
+          ...prev,
+          location: data.location   // ✅ fill input automatically
+        }));
+
       });
-
-      let [lat, long] = latlong;
-
-      const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/getlocation", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ latlong: { lat, long } })
-      });
-
-      const { location } = await response.json();
-
-      setAddress(location);
-
-      // ✅ FIXED: set geolocation correctly
-      setCredentials((prev) => ({
-        ...prev,
-        geolocation: location
-      }));
-
     } catch (error) {
-      console.error(error);
-      alert("Unable to fetch location");
+      alert("Location access denied. Please enter manually.");
     }
   };
 
@@ -61,9 +46,9 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ VALIDATION (IMPORTANT FIX)
-    if (!credentials.geolocation || credentials.geolocation === "") {
-      alert("Please click 'Click for current Location' first");
+    // ✅ NEW VALIDATION
+    if (!credentials.location) {
+      alert("Please enter your location");
       return;
     }
 
@@ -77,7 +62,7 @@ export default function Signup() {
           name: credentials.name,
           email: credentials.email,
           password: credentials.password,
-          location: credentials.geolocation
+          location: credentials.location   // ✅ fixed
         })
       });
 
@@ -126,20 +111,25 @@ export default function Signup() {
               value={credentials.email} onChange={onChange} />
           </div>
 
+          {/* ✅ MANUAL LOCATION INPUT */}
           <div className="m-3">
-            <label className="form-label">Address</label>
-            <input type="text" className="form-control"
-              value={address}
-              placeholder="Click below to fetch address"
-              readOnly
+            <label className="form-label">Location</label>
+            <input
+              type="text"
+              className="form-control"
+              name="location"
+              placeholder="Enter your location manually"
+              value={credentials.location}
+              onChange={onChange}
             />
           </div>
 
+          {/* ✅ OPTIONAL AUTO-FILL BUTTON */}
           <div className="m-3">
             <button type="button"
               onClick={handleClick}
               className="btn btn-success">
-              Click for current Location
+              Auto Detect Location (Optional)
             </button>
           </div>
 
