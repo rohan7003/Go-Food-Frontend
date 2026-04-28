@@ -32,12 +32,12 @@ export default function Signup() {
     const { location } = await response.json()
     console.log(location);
     setAddress(location);
-    setCredentials({ ...credentials, [e.target.name]: location })
+    setCredentials({ ...credentials, geolocation: location })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("httpS://go-food-2-9v3n.onrender.com/api/auth/createuser", {
+    const response = await fetch("https://go-food-2-9v3n.onrender.com/api/auth/createuser", {
       // credentials: 'include',
       // Origin:"http://localhost:3000/login",
       method: 'POST',
